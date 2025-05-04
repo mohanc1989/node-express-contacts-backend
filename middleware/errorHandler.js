@@ -38,7 +38,12 @@ const errorHandler = (err, req, res, next) => {
             })
             break;
         default:
-            console.log("No erorr");
+            res.json({
+                title : "Unknown Error",
+                message : err.message,
+                stackTrace : err.stack
+            })
+            break;
             break;
     }
     
