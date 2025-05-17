@@ -44,7 +44,6 @@ const errorHandler = (err, req, res, next) => {
                 stackTrace : err.stack
             })
             break;
-            break;
     }
     
 }
