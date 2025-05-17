@@ -66,7 +66,7 @@ const userLogin = asyncHandler (async (req,res) => {
 //@route post /api/user/current
 //@access private
 const currentUser = asyncHandler (async (req,res) => {
-    res.send({messgage: "current user controller"});
+    res.send(req.user);
 });
 
 module.exports = {userRegister,userLogin, currentUser}
