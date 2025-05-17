@@ -2,16 +2,16 @@ const asyncHandler = require("express-async-handler");
 const Contact = require("../model/contactModel");
 //@desc Get Contacts
 //@route GET /api/contacts
-//@access public
+//@access private
 
 const getContacts = asyncHandler(async (req, res) => {
-    const contacts = await Contact.find();
+    const contacts = await Contact.find({user_id: req.user.id});
     res.status(200).json(contacts);
 });
 
 //@desc Get Contact
 //@route GET /api/contact/:id
-//@access public
+//@access private
 
 const getContact = asyncHandler(async (req, res) => {
     const contact = await Contact.findById(req.params.id);
@@ -24,7 +24,7 @@ const getContact = asyncHandler(async (req, res) => {
 
 //@desc Create Contact
 //@route POST /api/contact
-//@access public
+//@access private
 
 const creatContact = asyncHandler(async (req, res) => {
     console.log("the request body is :", req.body);
@@ -39,19 +39,24 @@ const creatContact = asyncHandler(async (req, res) => {
         name,
         email,
         phone,
+        user_id:req.user.id
     })
     res.status(201).json(contact);
 });
 
 //@desc Update Contact
 //@route PUT /api/contacts/id
-//@access public
+//@access private
 
 const updateContact = asyncHandler(async (req, res) => {
     const contact = await Contact.findById(req.params.id);
     if(!contact){
         res.status(404);
         throw new Error("Contact not found")
+    }
+    if(contact.user_id.toString() !== req.user.id){
+        res.status(403);
+        throw new Error("User not authorized to update other contact");
     }
     const updatedContat = await Contact.findByIdAndUpdate(
         req.params.id,
@@ -63,13 +68,17 @@ const updateContact = asyncHandler(async (req, res) => {
 
 //@desc Delete Contact
 //@route PUT /api/contacts/id
-//@access public
+//@access private
 
 const deleteContact = asyncHandler(async (req, res) => {
     const contact = await Contact.findById(req.params.id);
     if(!contact){
         res.status(404);
         throw new Error("Contact not found")
+    }
+    if(contact.user_id.toString() !== req.user.id){
+        res.status(403);
+        throw new Error("User not authorized to delete other contact");
     }
     await Contact.findByIdAndDelete(req.params.id);
     res.status(200).json(contact);
