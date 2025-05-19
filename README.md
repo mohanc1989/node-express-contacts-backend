@@ -45,4 +45,7 @@ This is a simple RESTful API built using **Node.js**, **Express.js**, and **Mong
    npm run dev
 
 Or to start normally:
+```bash
+   npm start
+
 
