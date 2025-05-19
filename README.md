@@ -37,4 +37,12 @@ This is a simple RESTful API built using **Node.js**, **Express.js**, and **Mong
    ```bash
    npm install
 
+3. **Start the development server**
+   ```bash
+   npm run dev
+
+   Or start normally:
+
+ ```bash
+   npm start
 
