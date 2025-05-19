@@ -32,3 +32,9 @@ This is a simple RESTful API built using **Node.js**, **Express.js**, and **Mong
    ```bash
    git clone https://github.com/mohanc1989/node-express-contacts-backend.git
    cd node-express-contacts-backend
+
+2. **Install dependencies**
+   ```bash
+   npm install
+
+
