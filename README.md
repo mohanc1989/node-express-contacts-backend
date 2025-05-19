@@ -38,11 +38,9 @@ This is a simple RESTful API built using **Node.js**, **Express.js**, and **Mong
    npm install
 
 3. **Start the development server**
+
+   To start the server in development mode (with automatic restarts using nodemon):
+
    ```bash
    npm run dev
-
-   Or start normally:
-
- ```bash
-   npm start
 
