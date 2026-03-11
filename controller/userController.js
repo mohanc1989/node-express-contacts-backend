@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../model/userMode");
+const User = require("../model/userModel");
 
 //@desc Post register
 //@route GET /api/user/register
@@ -24,7 +24,6 @@ const userRegister =  asyncHandler(async (req, res) => {
         email,
         password: hassedPassword
     });
-    console.log(`User created ${user}`);
     if(user){
         res.status(201).json({id:user.id, email: user.email});
     }else{
@@ -39,7 +38,7 @@ const userRegister =  asyncHandler(async (req, res) => {
 const userLogin = asyncHandler (async (req,res) => {
     const {email, password} = req.body;
     if(!email || !password){
-        res.send(400);
+        res.status(400);
         throw new Error("All fields are mandiatoy");
     }
     const user = await User.findOne({email});

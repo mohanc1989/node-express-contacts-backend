@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Contact = require("../model/contactModel");
+const { cloudinary } = require("../config/cloudinary");
+
 //@desc Get Contacts
 //@route GET /api/contacts
 //@access private
@@ -27,9 +29,7 @@ const getContact = asyncHandler(async (req, res) => {
 //@access private
 
 const creatContact = asyncHandler(async (req, res) => {
-    console.log("the request body is :", req.body);
-    const {name,email,phone} = req.body;
-    console.log('request partm', name, email, phone);
+    const {name, email, phone, image} = req.body;
     if(!name || !email || !phone) {
         res.status(400);
         throw new Error("All Fields are mandatory");
@@ -39,6 +39,7 @@ const creatContact = asyncHandler(async (req, res) => {
         name,
         email,
         phone,
+        image: image || null,
         user_id:req.user.id
     })
     res.status(201).json(contact);
@@ -58,16 +59,28 @@ const updateContact = asyncHandler(async (req, res) => {
         res.status(403);
         throw new Error("User not authorized to update other contact");
     }
-    const updatedContat = await Contact.findByIdAndUpdate(
+
+    // If there's a new image and the contact already has an image, delete the old one
+    if (req.body.image && contact.image) {
+        try {
+            // Extract public_id from the Cloudinary URL
+            const publicId = contact.image.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
+        } catch (error) {
+            console.error('Error deleting old image:', error);
+        }
+    }
+
+    const updatedContact = await Contact.findByIdAndUpdate(
         req.params.id,
         req.body,
         {new : true}
     );
-    res.status(200).json(updatedContat);
+    res.status(200).json(updatedContact);
 });
 
 //@desc Delete Contact
-//@route PUT /api/contacts/id
+//@route DELETE /api/contacts/id
 //@access private
 
 const deleteContact = asyncHandler(async (req, res) => {
@@ -80,6 +93,18 @@ const deleteContact = asyncHandler(async (req, res) => {
         res.status(403);
         throw new Error("User not authorized to delete other contact");
     }
+
+    // Delete image from Cloudinary if it exists
+    if (contact.image) {
+        try {
+            // Extract public_id from the Cloudinary URL
+            const publicId = contact.image.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
+        } catch (error) {
+            console.error('Error deleting image:', error);
+        }
+    }
+
     await Contact.findByIdAndDelete(req.params.id);
     res.status(200).json(contact);
 });

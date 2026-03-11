@@ -17,6 +17,10 @@ const contactSchema = mongoose.Schema({
     phone: {
         type: String,
         required:[true, "Please add the contact phone number"]
+    },
+    image: {
+        type: String,
+        default: null
     }
 },{
     timestamps: true
